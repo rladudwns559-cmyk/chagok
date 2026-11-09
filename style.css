@@ -169,6 +169,8 @@ kbd{font:600 13px var(--body);background:var(--paper);border-radius:7px;padding:
 .steps li::before{content:counter(s);width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:700;font-size:15px;color:#fff;background:var(--night-2);box-shadow:0 0 0 1px var(--night-line) inset}
 .steps b{color:#fff;font-weight:600}
 .steps .why{display:block;font-size:14px;color:var(--night-dim);margin-top:4px}
+.upd{margin-top:22px;max-width:34em;font-size:14.5px;line-height:1.6;color:var(--night-text)}
+.upd b{color:#fff;font-weight:600}
 .req{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:28px;font-size:14px;color:var(--night-dim)}
 @media (max-width:860px){.get-it .wrap{grid-template-columns:1fr}.tilt img{width:200px}}
 footer{background:var(--night);border-top:1px solid var(--night-line);font-size:14px;color:var(--night-dim)}
