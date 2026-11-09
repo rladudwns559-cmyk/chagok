@@ -70,10 +70,12 @@
   }
 
   // 화면이 넓으면 도시를 왼쪽 아래로 넓게, 글은 오른쪽. 좁으면 위쪽에.
-  var wide = true;
+  var wide = true, pan = 0;
   function resize(){
     var w = canvas.clientWidth, h = canvas.clientHeight; if (!w || !h) return;
     renderer.setSize(w, h, false); camera.aspect = w / h; wide = w >= 860;
+    // 화면 비율이 좁을수록 왼쪽(최근·오늘 쪽)으로 시선을 옮겨 오늘 기둥이 잘리지 않게
+    pan = wide ? Math.max(0, Math.min(3.5, (2.0 - camera.aspect) * 4.2)) : 0;
     if (wide) camera.setViewOffset(w, h, w * 0.02, -h * 0.17, w, h); else camera.clearViewOffset();
     camera.fov = wide ? 30 : 44; camera.updateProjectionMatrix();
   }
@@ -94,7 +96,7 @@
     // 천천히 떠다니는 카메라 + 마우스를 따라 살짝
     var drift = reduce ? 0 : Math.sin(now / 7000) * 0.9;
     cx += ((px * 2.2 + drift) - cx) * (reduce ? 1 : .04); cy += ((py * -1.2) - cy) * (reduce ? 1 : .04);
-    camera.position.set(-5 + cx, (wide ? 8 : 12) + cy, wide ? 20.5 : 24); camera.lookAt(0.6 + cx * .3, 0.6, 0);
+    camera.position.set(-5 - pan + cx, (wide ? 8 : 12) + cy, wide ? 20.5 : 24); camera.lookAt(0.6 - pan + cx * .3, 0.6, 0);
     glow.intensity = (settled || reduce ? 1 : Math.min(1, t / introEnd)) * (reduce ? 1.4 : 1.2 + Math.sin(now / 900) * 0.35);
     renderer.render(scene, camera);
   }
