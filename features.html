@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>기능 · 차곡</title>
+<meta name="description" content="집중 골든타임과 코치, 뽀모도로, 공부 기록 달력, 할 일, 시험 D-day, 작게 보기까지.">
+<meta property="og:title" content="기능 · 차곡">
+<meta property="og:description" content="집중 골든타임과 코치, 뽀모도로, 공부 기록 달력, 할 일, 시험 D-day, 작게 보기까지.">
+<meta property="og:image" content="icon.png">
+<link rel="icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@500;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head><body class="inner">
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="차곡 첫 화면으로"><img src="icon.png" alt="" width="34" height="34"><b>차곡<i>.</i></b></a>
+    <nav aria-label="페이지 안내">
+      <a href="how.html">순공 세는 법</a>
+      <a href="features.html" aria-current="page">기능</a>
+      <a class="get" href="download.html">다운로드</a>
+    </nav>
+  </div>
+</header>
+<main class="paper first">
+  <section class="wrap" id="features" aria-label="기능">
+      <article class="feature">
+        <div class="copy">
+          <p class="kicker">차곡 분석</p>
+          <h3>언제 집중이 잘 되는지,<br>기록이 알려 줘요</h3>
+          <p>최근 28일 기록을 요일과 시간으로 펼쳐서 순공이 가장 많이 쌓인 두 시간을 찾아요. 계산은 전부 내 컴퓨터 안에서 해요.</p>
+          <ul>
+            <li style="--c:var(--lime)">집중 골든타임 <span>· 요일×시간 지도</span></li>
+            <li style="--c:var(--coral)">순공률 <span>· 앉아 있던 시간 중 실제로 집중한 비율</span></li>
+            <li style="--c:var(--blue)">흐름 <span>· 최근 2주 하루 순공이 늘고 있는지</span></li>
+            <li style="--c:var(--amber)">과목 균형 <span>· 이번 주 어떤 과목에 시간을 썼는지</span></li>
+          </ul>
+          <div class="coach"><em>차곡 코치</em><p>오늘은 오후 2시부터가 골든타임이에요. 최근 7일 가장 덜 한 '영어'를 40분 해볼까요?</p></div>
+        </div>
+        <div class="shot"><img src="analysis.png" alt="차곡 분석 화면: 코치 카드, 연속 공부일과 순공률, 요일·시간별 골든타임 지도, 과목 균형" width="1200" height="881" loading="lazy"></div>
+      </article>
+
+      <article class="feature flip">
+        <div class="copy">
+          <p class="kicker">집중 타이머</p>
+          <h3>자유롭게, 또는<br>뽀모도로로</h3>
+          <p>누르면 시작, 다시 누르면 잠시 쉬기. 뽀모도로를 켜면 25분 뒤에 알아서 쉬고, 휴식이 끝나면 알림으로 불러 줘요.</p>
+          <ul>
+            <li style="--c:var(--coral)">작업 표시줄 제목에 진행 시간 표시</li>
+            <li style="--c:var(--amber)">집중 분·휴식 분은 원하는 대로</li>
+            <li style="--c:var(--teal)">오늘의 할 일과 하루 목표 막대</li>
+          </ul>
+        </div>
+        <div class="shot"><img src="todo.png" alt="집중 타이머 화면: 뽀모도로 모드, 시험 D-12 표시, 오늘의 할 일 목록" width="1200" height="881" loading="lazy"></div>
+      </article>
+
+      <article class="feature">
+        <div class="copy">
+          <p class="kicker">공부 기록</p>
+          <h3>한 달이<br>색으로 보여요</h3>
+          <p>공부한 만큼 날짜 칸이 진해져요. 날짜를 누르면 그날 과목별 시간과 기록, 남겨 둔 한 줄 메모가 나와요.</p>
+          <ul>
+            <li style="--c:var(--lime)">하루 목표 대비 네 단계 색</li>
+            <li style="--c:var(--blue)">타이머를 깜빡했으면 직접 추가</li>
+          </ul>
+        </div>
+        <div class="shot"><img src="history.png" alt="공부 기록 화면: 공부량만큼 칠해진 달력과 날짜별 과목 합계" width="1200" height="881" loading="lazy"></div>
+      </article>
+    </section>
+  <section class="wrap extras" aria-label="그 밖의 기능">
+      <div class="extra">
+        <div class="mini"><img src="mini.png" alt="작게 보기: 과목 이름과 진행 시간, 쉬기 버튼만 있는 작은 타이머" width="372" height="110" loading="lazy"></div>
+        <h4>작게 보기</h4>
+        <p>강의 영상이나 PDF 위에 작은 타이머만 띄워 둬요. 끌어서 옮기고, 두 번 누르면 원래 창으로.</p>
+      </div>
+      <div class="extra">
+        <span class="dday">기말고사 D-12</span>
+        <h4>시험 D-day</h4>
+        <p>시험을 다섯 개까지 적어 두면 가장 가까운 날짜가 맨 위에 늘 보여요.</p>
+      </div>
+      <div class="extra">
+        <ul class="todo"><li class="done">영단어 50개</li><li>확률론 과제 제출</li></ul>
+        <h4>오늘의 할 일</h4>
+        <p>끝내면 동그라미를 눌러 지워요. 못한 일은 다음 날로 넘어가요.</p>
+      </div>
+      <div class="extra">
+        <h4>키보드로 바로</h4>
+        <p>손을 마우스로 옮기지 않아도 돼요.</p>
+        <div class="keys"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> 시작·쉬기</div>
+        <div class="keys"><kbd>Ctrl</kbd>+<kbd>M</kbd> 작게 보기</div>
+        <div class="keys"><kbd>Ctrl</kbd>+<kbd>1</kbd>~<kbd>4</kbd> 화면 이동</div>
+      </div>
+    </section>
+  <div class="wrap next"><a href="download.html"><small>다음</small><b>다운로드</b></a></div>
+</main>
+<footer>
+  <div class="wrap"><span>차곡 · 순공 타이머</span><span>무료 · 광고 없음 · 기록은 내 컴퓨터에만</span></div>
+</footer><script src="tilt.js"></script>
+</body>
+</html>

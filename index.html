@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>차곡 순공 타이머</title>
+<meta name="description" content="쉬는 시간은 빼고 몰입한 시간만 날짜별로 쌓는 Windows용 순공 타이머. 로그인 없이, 기록은 내 컴퓨터에만.">
+<meta property="og:title" content="차곡 순공 타이머">
+<meta property="og:description" content="쉬는 시간은 빼고 몰입한 시간만 날짜별로 쌓는 Windows용 순공 타이머. 로그인 없이, 기록은 내 컴퓨터에만.">
+<meta property="og:image" content="icon.png">
+<link rel="icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@500;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head><body class="home">
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="차곡 첫 화면으로"><img src="icon.png" alt="" width="34" height="34"><b>차곡<i>.</i></b></a>
+    <nav aria-label="페이지 안내">
+      <a href="how.html">순공 세는 법</a>
+      <a href="features.html">기능</a>
+      <a class="get" href="download.html">다운로드</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap">
+      <div>
+        <h1 id="hero-title">몰입한 시간만,<span class="stack">차곡차곡.</span></h1>
+        <p class="lead">차곡은 Windows용 순공 타이머예요. <strong>잠시 쉬는 동안엔 시계가 멈추고</strong>, 실제로 집중한 시간만 날짜별로 쌓여요. 쌓인 기록으로 내가 언제 집중이 잘 되는지도 알려 줘요.</p>
+        <div class="cta">
+          <a class="btn btn-main" href="chagok-windows.zip" download="차곡-Windows.zip">
+            <svg class="win" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M1 3.2 8.2 2.2v7H1zM9.2 2.1 19 .8v8.4H9.2zM1 10.4h7.2v7L1 16.4zM9.2 10.4H19v8.8l-9.8-1.3z"/></svg>
+            <span>Windows용 무료 다운로드<small>v1.0 · 273KB · 설치 없이 바로 실행</small></span>
+          </a>
+          <a class="btn btn-ghost" href="how.html">순공은 어떻게 세나요?</a>
+        </div>
+        <div class="facts"><span>로그인 없음</span><span>기록은 내 컴퓨터에만</span><span>광고 없음</span></div>
+      </div>
+
+      <div class="stage" id="stage">
+        <p class="demo-note" id="demo-note">직접 눌러 보세요<br>데모에서는 1초가 1분, 30분마다 한 칸씩 쌓여요</p>
+        <canvas id="scene" aria-hidden="true"></canvas>
+        <div class="fallback" id="fallback" hidden><img src="icon.png" alt="차곡 아이콘: 다섯 빛깔 막대 위로 곡선이 지나가는 모양"></div>
+        <div class="panel" id="panel" role="group" aria-label="순공 타이머 데모">
+          <div class="clock" id="clock" aria-live="off">00<i>:</i>00<i>:</i>00</div>
+          <div class="state" id="state"><b>집중하는 중</b>오늘 칸에 쌓이고 있어요</div>
+          <button class="toggle" id="toggle" type="button">Ⅱ 잠시 쉬기</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var stage = document.getElementById("stage"), canvas = document.getElementById("scene");
+  var panel = document.getElementById("panel"), clockEl = document.getElementById("clock"), stateEl = document.getElementById("state"), toggle = document.getElementById("toggle");
+
+  // ── 데모 타이머: 1초 = 1분, 30분마다 오늘 칸에 블록 하나 ──
+  var running = true, demoMin = 0, sinceBlock = 0, last = performance.now();
+  function pad(n){ return (n<10?"0":"")+n; }
+  function drawClock(){
+    var total = Math.floor(demoMin*60), h = Math.floor(total/3600), m = Math.floor(total/60)%60, s = total%60;
+    clockEl.innerHTML = pad(h)+"<i>:</i>"+pad(m)+"<i>:</i>"+pad(s);
+  }
+  function setRunning(on){
+    running = on; panel.classList.toggle("paused", !on);
+    toggle.textContent = on ? "Ⅱ 잠시 쉬기" : "▶ 이어서 공부";
+    stateEl.innerHTML = on ? "<b>집중하는 중</b>오늘 칸에 쌓이고 있어요" : "<b>잠깐 쉬는 중</b>이 시간은 쌓이지 않아요";
+  }
+  toggle.addEventListener("click", function(){ setRunning(!running); });
+
+  // ── 3D: 요일별로 쌓이는 순공 블록 ──
+  if (!window.THREE || !(function(){ try { var c=document.createElement("canvas"); return !!(c.getContext("webgl")||c.getContext("experimental-webgl")); } catch(e){ return false; } })()) {
+    canvas.hidden = true; document.getElementById("fallback").hidden = false;
+    setInterval(function(){ if(running){ demoMin += 1; drawClock(); } }, 1000);
+    return;
+  }
+  var THREE = window.THREE;
+  var renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true, alpha: true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  var scene = new THREE.Scene();
+  var camera = new THREE.OrthographicCamera(-1,1,1,-1,0.1,100);
+  camera.position.set(11, 8.4, 13); camera.lookAt(0, 1.35, 0);
+
+  scene.add(new THREE.HemisphereLight(0xdfe6ff, 0x1a1622, 0.55));
+  var sun = new THREE.DirectionalLight(0xffffff, 1.15); sun.position.set(5, 12, 3); scene.add(sun);
+  var fill = new THREE.DirectionalLight(0xffb48a, 0.35); fill.position.set(-8, 3, 7); scene.add(fill);
+
+  var world = new THREE.Group(); scene.add(world);
+  var COLORS = [0xff7054, 0xffb03b, 0x84cc5c, 0x30beb2, 0x628ef6];
+  var DAYS = ["월","화","수","목","금","토","일"];
+  // 최근 7일(맨 오른쪽이 오늘). 앞의 6일은 예시 기록, 오늘은 데모 타이머로 쌓여요.
+  var today = 6, sample = [5, 6, 3, 8, 7, 4, 1];   // 하루에 쌓인 30분 블록 수(예시)
+  var dayName = function(i){ var d = new Date(); d.setDate(d.getDate() - (6 - i)); return DAYS[(d.getDay() + 6) % 7]; };
+  var SPACING = 1.18, SIZE = 0.86, H = 0.34, GAP = 0.035;
+  var colX = function(i){ return (i - 3) * SPACING; };
+
+  // 바닥 판
+  var slab = new THREE.Mesh(new THREE.BoxGeometry(8.9, 0.28, 2.1), new THREE.MeshStandardMaterial({color: 0x222839, roughness: .9, metalness: .05}));slab.material.color.convertSRGBToLinear();
+  slab.position.y = -0.14; world.add(slab);
+  var slabEdge = new THREE.LineSegments(new THREE.EdgesGeometry(slab.geometry), new THREE.LineBasicMaterial({color: 0xffffff, transparent: true, opacity: .10}));
+  slabEdge.position.copy(slab.position); world.add(slabEdge);
+
+  // 요일 글자
+  function label(text, color, weight){
+    var c = document.createElement("canvas"); c.width = 128; c.height = 64; var g = c.getContext("2d");
+    g.font = (weight||600) + " 38px 'IBM Plex Sans KR','Malgun Gothic',sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillStyle = color; g.fillText(text, 64, 34);
+    var t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = 4;
+    // 늘 카메라를 보는 글자(비스듬한 바닥에 눕히면 찌그러져 보여서)
+    var m = new THREE.Sprite(new THREE.SpriteMaterial({map: t, transparent: true, depthWrite: false}));
+    m.scale.set(0.84, 0.42, 1); return m;
+  }
+  for (var i = 0; i < 7; i++) {
+    var lb = label(i === today ? "오늘" : dayName(i), i === today ? "#ff8a68" : "#aab3c6", i === today ? 700 : 600);
+    lb.position.set(colX(i), -0.62, 1.15); world.add(lb);
+  }
+
+  var boxGeo = new THREE.BoxGeometry(SIZE, H - GAP, SIZE), edgeGeo = new THREE.EdgesGeometry(boxGeo);
+  // 화면 색(sRGB)을 렌더러가 쓰는 선형 색으로 바꿔야 아이콘처럼 진한 색이 나와요
+  var mats = COLORS.map(function(c){ var m = new THREE.MeshStandardMaterial({color: c, roughness: .5, metalness: .04}); m.color.convertSRGBToLinear(); return m; });
+  var edgeMat = new THREE.LineBasicMaterial({color: 0xffffff, transparent: true, opacity: .32});
+  var stacks = [[],[],[],[],[],[],[]], drops = [];
+
+  // 블록 하나를 하늘에서 떨어뜨려 해당 요일 칸 위에 얹는다
+  function addBlock(day, delay, instant){
+    var n = stacks[day].length, color = (day * 2 + Math.floor(n / 2)) % 5;   // 같은 과목이 두 칸씩 이어지게
+    var b = new THREE.Mesh(boxGeo, mats[color]); b.add(new THREE.LineSegments(edgeGeo, edgeMat));
+    var targetY = n * H + H / 2;
+    b.position.set(colX(day), instant ? targetY : targetY + 7, 0);
+    world.add(b); stacks[day].push(b);
+    if (!instant) drops.push({mesh: b, from: targetY + 7, to: targetY, start: performance.now() + (delay || 0), dur: 620});
+    return b;
+  }
+  // 떨어져서 살짝 튕긴 뒤 자리 잡기
+  function landing(t){ if (t < .72) { var u = t / .72; return u * u; } var v = (t - .72) / .28; return 1 - Math.sin(v * Math.PI) * 0.06 * (1 - v); }
+
+  // 첫 장면: 월요일부터 오늘까지 차례로 쌓기(미래 요일은 빈칸)
+  var order = 0;
+  for (var d = 0; d <= today; d++) {
+    var count = sample[d];
+    for (var k = 0; k < count; k++) { addBlock(d, reduce ? 0 : 160 + order * 55, reduce); order++; }
+  }
+
+  // 쌓인 높이를 잇는 곡선(아이콘의 그 곡선)
+  var curveGroup = new THREE.Group(); world.add(curveGroup);
+  var glowMat = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: .16, depthWrite: false});
+  var lineMat = new THREE.MeshBasicMaterial({color: 0xffffff});
+  function settledHeight(day){ return stacks[day].length * H; }
+  function rebuildCurve(){
+    while (curveGroup.children.length) { var c = curveGroup.children.pop(); c.geometry.dispose(); }
+    if (today < 1) return;
+    var pts = [];
+    for (var i = 0; i <= today; i++) pts.push(new THREE.Vector3(colX(i), settledHeight(i) + 0.32, 0));
+    var curve = new THREE.CatmullRomCurve3(pts, false, "centripetal");
+    curveGroup.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 80, 0.11, 10, false), glowMat));
+    curveGroup.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 80, 0.038, 8, false), lineMat));
+  }
+  var curveDirty = true, curveShown = reduce ? 1 : 0;
+
+  // 화면 크기에 맞춰 카메라 범위 정하기
+  function resize(){
+    var w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    // 세로 범위(view)를 장면 크기에 맞춰: 폭 약 10.2, 높이 약 6.4가 들어가게
+    var aspect = w / h, view = Math.max(6.4, 10.2 / aspect);
+    camera.left = -view * aspect / 2; camera.right = view * aspect / 2; camera.top = view / 2; camera.bottom = -view / 2;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener("resize", resize); resize();
+
+  // 마우스를 따라 살짝 돌아보기
+  var targetRot = -0.06, rot = -0.06, tiltX = 0, targetTilt = 0;
+  stage.addEventListener("pointermove", function(e){
+    var r = stage.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+    targetRot = -0.06 + x * 0.5; targetTilt = y * 0.08;
+  });
+  stage.addEventListener("pointerleave", function(){ targetRot = -0.06; targetTilt = 0; });
+
+  // 보이지 않으면 그리지 않기
+  var visible = true;
+  if ("IntersectionObserver" in window) new IntersectionObserver(function(es){ visible = es[0].isIntersecting; }, {threshold: 0}).observe(stage);
+
+  var MAX_TODAY = 12;
+  function frame(now){
+    requestAnimationFrame(frame);
+    var dt = Math.min(0.25, (now - last) / 1000); last = now;
+    if (document.hidden) return;
+    if (running) {
+      demoMin += dt; sinceBlock += dt; drawClock();
+      if (sinceBlock >= 30) { sinceBlock -= 30; if (stacks[today].length < MAX_TODAY) { addBlock(today, 0, reduce); curveDirty = true; } }
+    }
+    if (!visible) return;
+    // 떨어지는 블록
+    for (var i = drops.length - 1; i >= 0; i--) {
+      var dr = drops[i], t = (now - dr.start) / dr.dur;
+      if (t < 0) { dr.mesh.visible = false; continue; }
+      dr.mesh.visible = true;
+      if (t >= 1) { dr.mesh.position.y = dr.to; drops.splice(i, 1); curveDirty = true; continue; }
+      var e = landing(t); dr.mesh.position.y = dr.from + (dr.to - dr.from) * Math.min(1, e) + (t > .72 ? (1 - e) * -1.2 : 0);
+    }
+    if (curveDirty && drops.length === 0) { rebuildCurve(); curveDirty = false; }
+    if (curveShown < 1 && drops.length === 0) curveShown = Math.min(1, curveShown + dt * 1.6);
+    glowMat.opacity = .16 * curveShown; lineMat.transparent = curveShown < 1; lineMat.opacity = curveShown;
+    rot += (targetRot - rot) * (reduce ? 1 : 0.06); tiltX += (targetTilt - tiltX) * (reduce ? 1 : 0.06);
+    world.rotation.y = rot; world.rotation.x = tiltX;
+    if (!reduce) world.position.y = Math.sin(now / 1800) * 0.05;
+    renderer.render(scene, camera);
+  }
+  drawClock(); requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
