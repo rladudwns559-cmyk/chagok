@@ -223,3 +223,18 @@ body.inner::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area
   .get-it.full .wrap{grid-template-columns:1fr;padding-top:44vh}
   .get-it.full .copy{grid-column:1}
 }
+/* ── v1.1 새 기능 ── */
+.v11{padding-block:clamp(56px,7vw,96px) 12px;border-top:1px solid var(--rule)}
+.v11 h2{font-size:clamp(28px,3.4vw,44px);color:var(--ink);margin-bottom:34px}
+.v11-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;align-items:start}
+.v11-grid .wide{grid-column:span 2}
+.v11-grid .report{grid-row:span 2}
+.v11-grid img.cal{display:block;width:100%;height:auto;border-radius:12px;margin-bottom:14px;border:1px solid var(--rule);box-shadow:0 14px 28px -18px rgba(20,24,35,.6)}
+.v11-grid .report img{border-radius:12px;margin-bottom:14px;box-shadow:0 14px 28px -18px rgba(20,24,35,.6)}
+.plan-demo{margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--paper)}
+.plan-demo .bar{height:8px;border-radius:99px;background:var(--paper-2);overflow:hidden;margin-bottom:10px}
+.plan-demo .bar i{display:block;height:100%;background:var(--coral);border-radius:99px}
+.plan-demo p{font-size:14px;color:var(--ink-2)}
+.stars{font-size:26px;letter-spacing:2px;color:var(--amber);margin-bottom:10px}.stars span{color:var(--paper-2)}
+@media (max-width:980px){.v11-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v11-grid .report{grid-row:auto}}
+@media (max-width:560px){.v11-grid{grid-template-columns:1fr}.v11-grid .wide{grid-column:auto}}
