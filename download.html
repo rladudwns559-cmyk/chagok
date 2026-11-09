@@ -25,10 +25,12 @@
   </div>
 </header>
 <main>
-  <section class="get-it" id="download" aria-labelledby="dl-title">
+  <section class="get-it full" id="download" aria-labelledby="dl-title">
+    <canvas id="bg" class="bg-scene" aria-hidden="true"></canvas>
+    <div class="bg-fallback" id="bg-fallback" hidden><img src="icon.png" alt="" width="512" height="512"></div>
+    <div class="veil" aria-hidden="true"></div>
     <div class="wrap">
-      <div class="tilt" id="tilt"><img src="icon.png" alt="차곡 앱 아이콘" width="512" height="512" loading="lazy"></div>
-      <div>
+      <div class="copy">
         <h2 id="dl-title">오늘 공부부터<br>쌓아 볼까요</h2>
         <p class="sub">압축을 풀고 바로 실행하면 돼요. 설치 과정도, 회원가입도 없어요.</p>
         <div class="cta">
@@ -49,6 +51,8 @@
 </main>
 <footer>
   <div class="wrap"><span>차곡 · 순공 타이머</span><span>무료 · 광고 없음 · 기록은 내 컴퓨터에만</span></div>
-</footer><script src="tilt.js"></script>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="bg.js"></script>
 </body>
 </html>
